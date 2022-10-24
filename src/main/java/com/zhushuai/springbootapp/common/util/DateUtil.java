@@ -14,21 +14,20 @@ import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
- *
  * JDK1.8日期工具类
- *
+ * <p>
  * 注意：
- *
+ * <p>
  * 1.如果使用LocalDate类型去操作时分秒，则会出现异常
- *
+ * <p>
  * 2.或者使用LocalTime类型去操作日期，则会出现异常
- *
+ * <p>
  * 3.LocalTime转化为具有时分秒的时间格式时，会自动补全为格林威治时间的时间（00：00：00）
- *
+ * <p>
  * 4.LocalTime转化为具有年月日的时间格式时，会自动补全为格林威治时间的日期（1970：01：01）
- *
+ * <p>
  * 5.如果准备获取两个日期间的微秒差/纳秒差时，请考虑到会出现long类型溢出
- *
+ * <p>
  * 6.取日差的时候是根据日数进行判断，即2000-01-01 23:59:59 和2000-01-02 00:00:00虽然差了1秒但是也差了1日
  *
  * @author zhushuai.zhu
@@ -38,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 public class DateUtil {
 
-    private static final  String PATTERN_YYYY_MM_DD_HH_MM_SS_SSS = "yyyy-MM-dd HH:mm:ss.SSS";
+    private static final String PATTERN_YYYY_MM_DD_HH_MM_SS_SSS = "yyyy-MM-dd HH:mm:ss.SSS";
 
     private static final String PATTERN_YYYY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
 
@@ -68,7 +67,8 @@ public class DateUtil {
 
     public static DateTimeFormatter HH_MM_DD = DateTimeFormatter.ofPattern(PATTERN_HH_MM_DD).withZone(ZONE);
 
-    public static final LocalDate GREENWICH_MEAN_TIME=LocalDate.of(1970,1,1);
+    public static final LocalDate GREENWICH_MEAN_TIME = LocalDate.of(1970, 1, 1);
+
     /**
      * Instant 转 java.util.Date
      *
@@ -79,6 +79,7 @@ public class DateUtil {
         Optional.ofNullable(instant).orElseThrow(() -> new RuntimeException("instant can not be null"));
         return Date.from(instant);
     }
+
     /**
      * LocalDateTime 转 java.util.Date
      *
@@ -263,7 +264,7 @@ public class DateUtil {
     public static String format(LocalDate localDate, DateTimeFormatter pattern) {
         Optional.ofNullable(localDate).orElseThrow(() -> new RuntimeException("localDate can not be null"));
         Optional.ofNullable(pattern).orElseThrow(() -> new RuntimeException("pattern can not be null"));
-        return format(localDateToLocalDateTimeConverter(localDate),pattern);
+        return format(localDateToLocalDateTimeConverter(localDate), pattern);
     }
 
     /**
@@ -276,7 +277,7 @@ public class DateUtil {
     public static String format(LocalTime localTime, DateTimeFormatter pattern) {
         Optional.ofNullable(localTime).orElseThrow(() -> new RuntimeException("localTime can not be null"));
         Optional.ofNullable(pattern).orElseThrow(() -> new RuntimeException("pattern can not be null"));
-        return format(localTimeToLocalDateTimeConverter(localTime),pattern);
+        return format(localTimeToLocalDateTimeConverter(localTime), pattern);
     }
 
     /**
@@ -322,21 +323,21 @@ public class DateUtil {
             throw new RuntimeException("can not format String :" + text);
         }
         Optional.ofNullable(pattern).orElseThrow(() -> new RuntimeException("pattern can not be null"));
-        TemporalAccessor temporalAccessor= pattern.parse(text);
+        TemporalAccessor temporalAccessor = pattern.parse(text);
         try {
-            Field date=temporalAccessor.getClass().getDeclaredField("date");
+            Field date = temporalAccessor.getClass().getDeclaredField("date");
             date.setAccessible(true);
-            if(!Optional.ofNullable(date.get(temporalAccessor)).isPresent()){
+            if (!Optional.ofNullable(date.get(temporalAccessor)).isPresent()) {
                 date.set(temporalAccessor, GREENWICH_MEAN_TIME);
             }
-            Field time=temporalAccessor.getClass().getDeclaredField("time");
+            Field time = temporalAccessor.getClass().getDeclaredField("time");
             time.setAccessible(true);
-            if(!Optional.ofNullable(time.get(temporalAccessor)).isPresent()){
+            if (!Optional.ofNullable(time.get(temporalAccessor)).isPresent()) {
                 time.set(temporalAccessor, LocalTime.MIN);
             }
             return LocalDateTime.from(temporalAccessor);
         } catch (ReflectiveOperationException e) {
-            throw new RuntimeException("format error :"+e.getMessage());
+            throw new RuntimeException("format error :" + e.getMessage());
         }
     }
 
@@ -355,8 +356,8 @@ public class DateUtil {
         Optional.ofNullable(pattern).orElseThrow(() -> new RuntimeException("pattern can not be null"));
         try {
             return LocalDate.parse(text, pattern);
-        }catch (DateTimeParseException exception){
-            throw new RuntimeException("why pattern does not have yyyymmdd? ["+ pattern+"]");
+        } catch (DateTimeParseException exception) {
+            throw new RuntimeException("why pattern does not have yyyymmdd? [" + pattern + "]");
         }
     }
 
@@ -374,8 +375,8 @@ public class DateUtil {
         Optional.ofNullable(pattern).orElseThrow(() -> new RuntimeException("pattern can not be null"));
         try {
             return LocalTime.parse(text, pattern);
-        }catch (DateTimeParseException exception){
-            throw new RuntimeException("why pattern does not have hhmmdd? ["+ pattern+"]");
+        } catch (DateTimeParseException exception) {
+            throw new RuntimeException("why pattern does not have hhmmdd? [" + pattern + "]");
         }
     }
 
@@ -700,8 +701,8 @@ public class DateUtil {
         Optional.ofNullable(source).orElseThrow(() -> new RuntimeException("source can not be null"));
         Optional.ofNullable(target).orElseThrow(() -> new RuntimeException("target can not be null"));
         Optional.ofNullable(timeUnit).orElseThrow(() -> new RuntimeException("timeUnit can not be null"));
-        if(TimeUnit.DAYS!=timeUnit){
-            throw new RuntimeException("LocalDate can not get between with :"+timeUnit.name());
+        if (TimeUnit.DAYS != timeUnit) {
+            throw new RuntimeException("LocalDate can not get between with :" + timeUnit.name());
         }
         return doBetween(localDateToLocalDateTimeConverter(source), localDateToLocalDateTimeConverter(target), timeUnit);
     }
@@ -718,8 +719,8 @@ public class DateUtil {
         Optional.ofNullable(source).orElseThrow(() -> new RuntimeException("source can not be null"));
         Optional.ofNullable(target).orElseThrow(() -> new RuntimeException("target can not be null"));
         Optional.ofNullable(timeUnit).orElseThrow(() -> new RuntimeException("timeUnit can not be null"));
-        if(TimeUnit.DAYS==timeUnit){
-            throw new RuntimeException("LocalDate can not get between with :"+timeUnit.name());
+        if (TimeUnit.DAYS == timeUnit) {
+            throw new RuntimeException("LocalDate can not get between with :" + timeUnit.name());
         }
         return doBetween(localTimeToLocalDateTimeConverter(source), localTimeToLocalDateTimeConverter(target), timeUnit);
     }
@@ -877,8 +878,8 @@ public class DateUtil {
         Optional.ofNullable(source).orElseThrow(() -> new RuntimeException("source can not be null"));
         Optional.ofNullable(amount).orElseThrow(() -> new RuntimeException("amount can not be null"));
         Optional.ofNullable(timeUnit).orElseThrow(() -> new RuntimeException("timeUnit can not be null"));
-        if(TimeUnit.DAYS!=timeUnit){
-            throw new RuntimeException("LocalDate can not plus with :"+timeUnit.name());
+        if (TimeUnit.DAYS != timeUnit) {
+            throw new RuntimeException("LocalDate can not plus with :" + timeUnit.name());
         }
         return (LocalDate) doPlus(source, amount, timeUnit);
     }
@@ -895,8 +896,8 @@ public class DateUtil {
         Optional.ofNullable(source).orElseThrow(() -> new RuntimeException("source can not be null"));
         Optional.ofNullable(amount).orElseThrow(() -> new RuntimeException("amount can not be null"));
         Optional.ofNullable(timeUnit).orElseThrow(() -> new RuntimeException("timeUnit can not be null"));
-        if(TimeUnit.DAYS==timeUnit){
-            throw new RuntimeException("LocalDate can not plus with :"+timeUnit.name());
+        if (TimeUnit.DAYS == timeUnit) {
+            throw new RuntimeException("LocalDate can not plus with :" + timeUnit.name());
         }
         return (LocalTime) doPlus(source, amount, timeUnit);
     }
@@ -1015,8 +1016,8 @@ public class DateUtil {
         Optional.ofNullable(source).orElseThrow(() -> new RuntimeException("source can not be null"));
         Optional.ofNullable(amount).orElseThrow(() -> new RuntimeException("amount can not be null"));
         Optional.ofNullable(timeUnit).orElseThrow(() -> new RuntimeException("timeUnit can not be null"));
-        if(TimeUnit.DAYS!=timeUnit){
-            throw new RuntimeException("LocalDate can not minus with :"+timeUnit.name());
+        if (TimeUnit.DAYS != timeUnit) {
+            throw new RuntimeException("LocalDate can not minus with :" + timeUnit.name());
         }
         return (LocalDate) doMinus(source, amount, timeUnit);
     }
@@ -1033,8 +1034,8 @@ public class DateUtil {
         Optional.ofNullable(source).orElseThrow(() -> new RuntimeException("source can not be null"));
         Optional.ofNullable(amount).orElseThrow(() -> new RuntimeException("amount can not be null"));
         Optional.ofNullable(timeUnit).orElseThrow(() -> new RuntimeException("timeUnit can not be null"));
-        if(TimeUnit.DAYS==timeUnit){
-            throw new RuntimeException("LocalDate can not minus with :"+timeUnit.name());
+        if (TimeUnit.DAYS == timeUnit) {
+            throw new RuntimeException("LocalDate can not minus with :" + timeUnit.name());
         }
         return (LocalTime) doMinus(source, amount, timeUnit);
     }
